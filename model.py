@@ -15,11 +15,11 @@ class KanBan(object):
 	# creates a table called task in the KanBanApp database
 	def create_table(self):
 		table = 'CREATE TABLE IF NOT EXISTS task('\
-				'id INTEGER PRIMARY KEY AUTOINCREAMENT,'\
-				'title TEXT,'\
-				'status TEXT,'\
-				'start_on DATETIME,'\
-				'end_on DATETIME);'	
+		'id INTEGER PRIMARY KEY AUTOINCREAMENT,'\
+		'title TEXT,'\
+		'status TEXT,'\
+		'start_on DATETIME,'\
+		'end_on DATETIME);'	
 
 		self.cursor.execute(table)
 
@@ -39,12 +39,24 @@ class KanBan(object):
 
 		task=self.cursor.fetchall()
 		for row in task:
-			task_list=[[row[0], row[1], row[2], row[3], row[4]]
+			task_list=[row[0], row[1], row[2], row[3], row[4]]
 		print(tabulate([task_list], headers=["Task Id", "Task Name", "Section", "Start Time", "Finish Time"],
-			numalign="center"))
+					numalign="center"))
 		self.conn.commit()
 		print('\n')
 
+
+#moves a task from todo section to doing section
+	def doing_task(self, task_id):
+		try:
+			if isinstance(int(task_id), int):
+				self.move_task(task_id, 'done')
+		except ValueError:
+			print("\n Try  again but this time round: TaskID should be a Number:\n")
+
+
+	
+	
 
 
 
