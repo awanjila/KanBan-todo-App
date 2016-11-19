@@ -28,7 +28,7 @@ class KanBan(object):
 	def create_task(self):
 		self.name=name
 		self.task_name=' '.join(self.name)
-		self.selection='todo'
+		self.section='todo'
 		insert_query ='INSERT INTO task(title, status) VALUES(?, ?)'
 		self.cursor.execute(insert_query, (self.task_name, self.selection))
 
@@ -55,14 +55,33 @@ class KanBan(object):
 			print("\nTry again but this time round: TaskID should be a Number:\n")
 
 
-#moves a task from dingo section to done section	
+#moves a task from doing section to done section	
 	def done_task(self, task_id):
 		try:
 			if isinstance(int(task_id), int):
 		except ValueError:
 			print("\nTry again but this time round: TaskID should be a Number:\n")
 
-			
+
+
+	def list_all(self):
+		section='all'
+		self.list_section(section)
+
+	def list_todo(self):
+		section='todo'
+		self.list_section(section)
+
+	def list_doing(self):
+		section='doing'
+		self.list_section(section)
+
+	def list_doing(self):
+		section='doing'
+		self.list_section(section)
+
+	def list_section(self, section):
+		self.section=section
 
 
 
