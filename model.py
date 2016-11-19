@@ -52,12 +52,17 @@ class KanBan(object):
 			if isinstance(int(task_id), int):
 				self.move_task(task_id, 'done')
 		except ValueError:
-			print("\n Try  again but this time round: TaskID should be a Number:\n")
+			print("\nTry again but this time round: TaskID should be a Number:\n")
 
 
-	
-	
+#moves a task from dingo section to done section	
+	def done_task(self, task_id):
+		try:
+			if isinstance(int(task_id), int):
+		except ValueError:
+			print("\nTry again but this time round: TaskID should be a Number:\n")
 
+			
 
 
 
