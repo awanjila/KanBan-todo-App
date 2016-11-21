@@ -107,7 +107,7 @@ class KanBan(object):
 				print('\n')
 
 		elif self.section=='doing':
-			query_section="SELECT id, title, status, start_on, end_on FROM task WHERE status='doing'"
+			query_selection="SELECT id, title, status, start_on, end_on FROM task WHERE status='doing'"
 			self.cursor.execute(query_selection)
 			records=self.cursor.fetchall()
 			if not records:
@@ -162,8 +162,59 @@ class KanBan(object):
 				print(tabulate(todo_list, headers=["Task Id", "Task Name", "Section", "Hours Taken", "Minutes Taken"],
 									numalign="center"))
 				print('\n')
+	#method to move a task from one section to another
+	def move_task(self, task_id, section):
+		self.task_id =task_id
+		self.section =section
+		# check first if the task exists
+		check="SELECT * FROM task WHERE id =?"
+		self.cursor.execute(check, (self.task_id,))
+		data =self.cursor.fetchone()
 
+		if data is None:
+			print('\nHey! There it seems that the Task you are looking for doesnt exist.\n\nType "list all" to check the Task list\n')
+		else:
+			task_current_section=data[2]
+			if task_current_section=='todo' and self.section=='done':
+				print('\nHey, You havent started doing that task yet\n')
 
+			if task_current_section=='done' and self.selection=='done':
+				print('\nHey, You have already fineshed doing that task\n')
+			if task_current_section=='doing' and self.selection=='doing':
+				print('\nHey, You havent currently doing that task\n')
+			elif (task_current_section=='todo' and self.selection=='doing')\
+				or (task_current_section=='doing' and self.selection=='done'):
+
+			# if the task is in todo section move it to the doing section
+				if task_current_section=='todo':
+				start_time=datetime.now().strftime("%Y-%m-%d %H:%M")	
+				move_task="UPDATE task SET status=?, start_on =? WHERE id=?"
+				self.cursor.execute(move_task, (self.section, start_time, self.task_id))
+				self.cursor.execute("SELECT * FROM task WHERE id =?", (self.task_id,))
+				print("\nWonderful! You have started doing the following task\n")
+				started_task=self.cursor.fetchall():
+				for row in started_task:
+					task_list=[row[0], row[1], row[2], row[3],row[4]]
+				print(tabulate([task_list], headers=["Task ID", "Task Name", "Section", "Start Time", "Finish Time"],
+					numalign="center"))
+				print('\n')
+				self.conn.commit()
+			# if task is in doing section move it to done section
+		elif task_current_section=='doing':
+			current_time=datetime.now().strftime("%Y-%m-%d %H:%M")
+			move_task="UPDATE task SET status=?, end_on=? WHERE id=?"
+			done_cursor=self.cursor.execute(move_task, (self.section, current_time, self.task_id))
+			print("\nGreat! You have finished the following task\n")
+			task=done_cursor.fetchall()
+			for row in task:
+				task_list=[row[0], row[1], row[2], row[3],row[4]]
+			print(tabulate([task_list], headers=["Task ID", "Task Name", "Section", "Start Time", "Finish Time"],
+					numalign="center"))
+
+			print('\n')
+			self.conn.commit()
+		else:
+			print('\nInvalid Section\n')
 
 
 
