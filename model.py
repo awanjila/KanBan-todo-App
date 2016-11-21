@@ -50,7 +50,7 @@ class KanBan(object):
 	def doing_task(self, task_id):
 		try:
 			if isinstance(int(task_id), int):
-				self.move_task(task_id, 'done')
+				self.move_task(task_id, 'doing')
 		except ValueError:
 			print("\nTry again but this time round: TaskID should be a Number:\n")
 
@@ -59,6 +59,7 @@ class KanBan(object):
 	def done_task(self, task_id):
 		try:
 			if isinstance(int(task_id), int):
+				self.move_task(task_id, 'done')
 		except ValueError:
 			print("\nTry again but this time round: TaskID should be a Number:\n")
 
@@ -76,15 +77,15 @@ class KanBan(object):
 		section='doing'
 		self.list_section(section)
 
-	def list_doing(self):
-		section='doing'
+	def list_done(self):
+		section='done'
 		self.list_section(section)
 
 	def list_section(self, section):
 		self.section=section
 
 		#the done section tasks
-		if self.selection='done':
+		if self.section=='done':
 			query_selection="SELECT id, title, status, start_on, end_on FROM task WHERE status='done'"
 			self.cursor.execute(query_selection)
 			records=self.cursor.fetchall()
@@ -105,8 +106,8 @@ class KanBan(object):
 									numalign="center"))
 				print('\n')
 
-		elif self.selection='doing':
-			query_selection="SELECT id, title, status, start_on, end_on FROM task WHERE status='doing'"
+		elif self.section=='doing':
+			query_section="SELECT id, title, status, start_on, end_on FROM task WHERE status='doing'"
 			self.cursor.execute(query_selection)
 			records=self.cursor.fetchall()
 			if not records:
@@ -126,7 +127,7 @@ class KanBan(object):
 									numalign="center"))
 				print('\n')
 
-		elif self.selection='all':
+		elif self.section=='all':
 			query_selection="SELECT * FROM task"
 			self.cursor.execute(query_selection)
 			records=self.cursor.fetchall()
@@ -141,7 +142,7 @@ class KanBan(object):
 				print(tabulate(doing_list, headers=["Task Id", "Task Name", "Section", "Start Time", "End Time"],
 									numalign="center"))
 				print('\n')
-		elif self.selection='todo':
+		elif self.section=='todo':
 			query_selection="SELECT * FROM task WHERE status='todo"
 			self.cursor.execute(query_selection)
 			records=self.cursor.fetchall()
