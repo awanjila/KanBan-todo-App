@@ -61,6 +61,80 @@ class MyInteractive(cmd.Cmd):
             '\t---------------------------------------------\n\n' \
             '\t+++++++++++++++++++++++++++++++++++++++++++++++++\n'
 
+    prompt='(This is the KanBan Console) '
+    file=None
+    kanban=KanBan()
+    # start functions here
+    def create(self, name):
+    	self.kanban.create_task(name)
+
+    def doing(self, task_id):
+    	self.kanban.doing_task(task_id)
+
+    def done(self, task_id):
+    	self.kanban.done_task(task_id)
+
+    def tasks(self):
+    	self.kanban.list_all()
+
+    def doing_tasks(self):
+    	self.kanban.list_doing()
+
+    def done_tasks(self):
+    	self.kanban.list_done()
+
+    def todo_tasks(self):
+    	self.kanban.list_todo()
+
+    #commands start here
+    @docopt_cmd
+    def do_todo(self, args):
+    	"""Create a todo task. For example todo learn some more oop
+        Usage: todo <name>..."""
+        self.create(args["<name>"])
+
+    @docopt_cmd
+    def do_done(self, args):
+    	""" Finish a task, e.g done 10
+    	done <task_id>"""
+    	self.done(args["<task_id>"])
+    @docopt_cmd
+    def do_doing(self, args):
+    	self.doing(args["<task_id>"])
+
+    @docopt_cmd
+    def do_list(self, args):
+    	 """List task as per their section.
+           list all, list done, list doing list todo
+        Usage: list <command> """
+        if args['<command>']=='all':
+        	self.tasks()
+        if args['<command>']=='done':
+        	self.done_tasks()
+        if args['<command>']=='doing':
+        	self.doing_tasks()
+        if args['<command>']=='todo':
+        	self.todo_tasks()
+        else:
+        	print('Invalid Command! use <all> or <done> or <doing>\n eg list all.')
+    def do_quit(self, arg):
+    	#Quits out of interactive Mode.
+    	print('\n Its been nice having you, Bye Bye!\n')
+        exit()
+#interactive mode
+opt=docopt(__doc__, sys.argv[1:])
+
+if opt['--interactive']:
+	MyInteractive().cmdloop()
+
+print(opt)
+     
+
+
+
+
+
+
 	
 
 

@@ -215,7 +215,7 @@ class KanBan(object):
 					self.conn.commit()
 			else:
 				print('\nInvalid Section\n')
-KanBan()
+
 
 
 
