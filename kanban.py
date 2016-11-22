@@ -43,6 +43,25 @@ def docopt_cmd(func):
     fn.__doc__ = func.__doc__
     fn.__dict__.update(func.__dict__)
     return fn
+class MyInteractive(cmd.Cmd):
+	"""docstring for MyInteractive"""
+	intro='\n\t++++++++++++++++++++++++++++++++++++++++++++++\n\n' \
+            '\tWelcome to KanBan Console Application!\n\n' \
+            '\tAdd, organize and view your tasks\n\n' \
+            '\tThe Commands For Any Action Are Listed Below\n\n' \
+            '\t---------------------------------------------\n'\
+            '\ttodo task_name : Create A todo Task \n' \
+            '\tdoing task_id  : Start Doing Task \n' \
+            '\tdone task_id   : Mark Task Done \n' \
+            '\tlist todo      : View Task You Supposed To Do\n' \
+            '\tlist doing     : View Task You Are Doing \n' \
+            '\tlist done      : View Task You Have Finished\n' \
+            '\tlist all       : View All Your Tasks In All Sections\n' \
+            '\tquit           : To Exit\n' \
+            '\t---------------------------------------------\n\n' \
+            '\t+++++++++++++++++++++++++++++++++++++++++++++++++\n'
+
+	
 
 
 
