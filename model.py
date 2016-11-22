@@ -15,7 +15,7 @@ class KanBan(object):
 	# creates a table called task in the KanBanApp database
 	def create_table(self):
 		table = 'CREATE TABLE IF NOT EXISTS task('\
-		'id INTEGER PRIMARY KEY AUTOINCREAMENT,'\
+		'id INTEGER PRIMARY KEY AUTOINCREMENT,'\
 		'title TEXT,'\
 		'status TEXT,'\
 		'start_on DATETIME,'\
@@ -215,6 +215,7 @@ class KanBan(object):
 					self.conn.commit()
 			else:
 				print('\nInvalid Section\n')
+KanBan()
 
 
 
