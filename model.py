@@ -8,7 +8,7 @@ class KanBan(object):
 		#connects to a KanBanApp database called tasks.db
 		self.conn=sqlite3.connect('tasks.db')    
 		self.cursor=self.conn.cursor()
-		self.start = datetime.now().strftime("%Y-%M-%d %H:%M")
+		self.start = datetime.now().strftime("%Y-%m-%d %H:%M")
 		#calls a method called create_table
 		self.create_table()   
 
@@ -25,12 +25,12 @@ class KanBan(object):
 
 
 	# This method creates a new task in the table task
-	def create_task(self):
+	def create_task(self, name):
 		self.name=name
 		self.task_name=' '.join(self.name)
 		self.section='todo'
 		insert_query ='INSERT INTO task(title, status) VALUES(?, ?)'
-		self.cursor.execute(insert_query, (self.task_name, self.selection))
+		self.cursor.execute(insert_query, (self.task_name, self.section))
 
 		print("\nTask %s Has been created \n" %self.task_name)
 
@@ -111,18 +111,18 @@ class KanBan(object):
 			self.cursor.execute(query_selection)
 			records=self.cursor.fetchall()
 			if not records:
-				print("\nYou have not doing any task(s) yet.\n")
+				print("\nYou have not Started doing any task(s) yet.\n")
 			else:
 				doing_list=[]
 				print("\nThese are the Tasks that you are still doing and their Duration.\n")
 				for row in records:
+					stop=datetime.strptime(self.start, '%Y-%m-%d %H:%M')
 					start=datetime.strptime(str(row[3]), '%Y-%m-%d %H:%M')
-					stop=datetime.strptime(str(row[4]), '%Y-%m-%d %H:%M')
 					start_time, stop_time =start.strftime('%H:%M').split(':'),stop.strftime('%H:%M').split(':')
 					hours=int(stop_time[1])-int(stop_time[0])
 					minutes=int(start_time[1])-int(start_time[0])
 					tasks_duration=[row[0], row[1], row[2], hours, minutes]
-					done_list.append(tasks_duration)
+					doing_list.append(tasks_duration)
 				print(tabulate(doing_list, headers=["Task Id", "Task Name", "Section", "Hours Taken", "Minutes Taken"],
 									numalign="center"))
 				print('\n')
@@ -143,7 +143,7 @@ class KanBan(object):
 									numalign="center"))
 				print('\n')
 		elif self.section=='todo':
-			query_selection="SELECT * FROM task WHERE status='todo"
+			query_selection="SELECT * FROM task WHERE status='todo'"
 			self.cursor.execute(query_selection)
 			records=self.cursor.fetchall()
 			if not records:
@@ -152,13 +152,9 @@ class KanBan(object):
 				todo_list=[]
 				print("\nThese are the Tasks that are to be done, and their initiation time.\n")
 				for row in records:
-					start=datetime.strptime(str(row[3]), '%Y-%m-%d %H:%M')
-					stop=datetime.strptime(str(row[4]), '%Y-%m-%d %H:%M')
-					start_time, stop_time =start.strftime('%H:%M').split(':'),stop.strftime('%H:%M').split(':')
-					hours=int(stop_time[1])-int(stop_time[0])
-					minutes=int(start_time[1])-int(start_time[0])
-					tasks_duration=[row[0], row[1], row[2], hours, minutes]
-					done_list.append(tasks_duration)
+					tasks_duration = [row[0], row[1], row[2], row[3], row[4]]
+					todo_list.append(tasks_duration)
+
 				print(tabulate(todo_list, headers=["Task Id", "Task Name", "Section", "Hours Taken", "Minutes Taken"],
 									numalign="center"))
 				print('\n')
@@ -178,12 +174,12 @@ class KanBan(object):
 			if task_current_section=='todo' and self.section=='done':
 				print('\nHey, You havent started doing that task yet\n')
 
-			if task_current_section=='done' and self.selection=='done':
+			if task_current_section=='done' and self.section=='done':
 				print('\nHey, You have already fineshed doing that task\n')
-			if task_current_section=='doing' and self.selection=='doing':
+			if task_current_section=='doing' and self.section=='doing':
 				print('\nHey, You havent currently doing that task\n')
-			elif (task_current_section=='todo' and self.selection=='doing')\
-			or (task_current_section=='doing' and self.selection=='done'):
+			elif (task_current_section=='todo' and self.section=='doing')\
+			or (task_current_section=='doing' and self.section=='done'):
 
 			# if the task is in todo section move it to the doing section
 				if task_current_section=='todo':
@@ -204,6 +200,7 @@ class KanBan(object):
 					current_time=datetime.now().strftime("%Y-%m-%d %H:%M")
 					move_task="UPDATE task SET status=?, end_on=? WHERE id=?"
 					done_cursor=self.cursor.execute(move_task, (self.section, current_time, self.task_id))
+					self.cursor.execute("SELECT * FROM task WHERE id = ?", (self.task_id,))
 					print("\nGreat! You have finished the following task\n")
 					task=done_cursor.fetchall()
 					for row in task:
